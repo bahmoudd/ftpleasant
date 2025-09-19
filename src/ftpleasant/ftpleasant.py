@@ -394,6 +394,7 @@ def _get_year(date: str):
 def _split_file_info(fileinfo):
     """
     Makes something returnable out of ftplib.FTP.dir()
+    This is for people whose FTP servers don't support MLST.
     I have no idea what the code below does, thank you codebynumbers for writing this for me. 
     """
     files = []
