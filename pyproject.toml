@@ -15,6 +15,7 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 urls = { Homepage = "https://github.com/bahmoudd/ftpleasant", Issues = "https://github.com/bahmoudd/ftpleasant/issues", Documentation = "https://github.com/bahmoudd/ftpleasant/wiki/" }
+Project-URL: Bug Tracker, http://bitbucket.org/tarek/distribute/issues/
 
 [build-system]
 requires = ["hatchling >= 1.26"]
