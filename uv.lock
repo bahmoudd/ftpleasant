@@ -1,0 +1,18 @@
+version = 1
+revision = 3
+requires-python = ">=3.7"
+
+[[package]]
+name = "ftpleasant"
+version = "0.1.0"
+source = { editable = "." }
+
+[package.dev-dependencies]
+dev = [
+    { name = "ftpleasant" },
+]
+
+[package.metadata]
+
+[package.metadata.requires-dev]
+dev = [{ name = "ftpleasant", editable = "." }]
