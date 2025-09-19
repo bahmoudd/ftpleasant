@@ -7,15 +7,22 @@ authors = [
 ]
 readme = "README.md"
 requires-python = ">=3.7"
-dependencies = []
-licence = "MIT"
+dependencies = [
+    "twine>=4.0.2",
+]
+license = "MIT"
 license-files = ["LICEN[CS]E*"]
 classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
+    "License :: OSI Approved :: MIT License",
+    "Development Status :: 4 - Beta",
 ]
-urls = { Homepage = "https://github.com/bahmoudd/ftpleasant", Issues = "https://github.com/bahmoudd/ftpleasant/issues", Documentation = "https://github.com/bahmoudd/ftpleasant/wiki/" }
-Project-URL: Bug Tracker, http://bitbucket.org/tarek/distribute/issues/
+
+[project.urls]
+Homepage = "https://github.com/bahmoudd/ftpleasant"
+Issues = "https://github.com/bahmoudd/ftpleasant/issues"
+Documentation = "https://github.com/bahmoudd/ftpleasant/wiki/"
 
 [build-system]
 requires = ["hatchling >= 1.26"]
@@ -34,10 +41,5 @@ members = [
     ".",
 ]
 
-[tool.uv.sources]
-ftpleasant = { workspace = true }
-
 [dependency-groups]
-dev = [
-    "ftpleasant",
-]
+dev = []
