@@ -18,7 +18,7 @@ classifiers = [
 [project.urls]
 Homepage = "https://github.com/bahmoudd/ftpleasant"
 Issues = "https://github.com/bahmoudd/ftpleasant/issues"
-Documentation = ""
+Documentation = "https://github.com/bahmoudd/ftpleasant/wiki/"
 
 [build-system]
 requires = ["hatchling >= 1.26"]
