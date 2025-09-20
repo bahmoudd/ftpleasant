@@ -9,7 +9,7 @@ from dateutil import parser
 import re
 from dateutil.relativedelta import relativedelta
 from itertools import chain
-from typing import Optional
+from typing import Optional, List, Union
 
 class FTPClient:
     def __init__(self, host: str, user: str, password: str, secure: bool, passive: bool=True, **kwargs) -> None:
@@ -54,15 +54,15 @@ class FTPClient:
         """Sets the debug level of ftplib"""
         self.conn.set_debuglevel(level)
     
-    def get_welcome(self):
+    def get_welcome(self) -> str:
         """Gets the server's welcome message"""
         return self.conn.getwelcome()
     
-    def abort(self):
+    def abort(self) -> str:
         """Attempts to abort a file transfer."""
         return self.conn.abort()
 
-    def quit(self):
+    def quit(self) -> None:
         """
         Requests the server to quit the connection. 
         If that fails, closes the connection without assuming anything about it
@@ -72,7 +72,7 @@ class FTPClient:
         except:
             self.conn.close()
     
-    def get_features(self):
+    def get_features(self) -> List[str]:
         """
         Returns a list of the FTP server's supported features
         """
@@ -81,7 +81,7 @@ class FTPClient:
         features = [item.strip() for item in features]
         return features
     
-    def get_mlst_features(self):
+    def get_mlst_features(self) -> List[str]:
         """"""
         features = self.get_features()
         if len([item.split(" ")[0] for item in self.get_features() if "MLST" in item]) == 0:
@@ -93,7 +93,7 @@ class FTPClient:
         mlst_features.pop(0)
         return mlst_features
 
-    def ls(self, remote_path=".", detailed_listing=False, mlst_listing_facts: Optional[list] = None):
+    def ls(self, remote_path=".", detailed_listing=False, mlst_listing_facts: Optional[list] = None) -> Union[List[str], List[dict]]:
         """
         Returns a list of the directories/files on the current working directory.
         
@@ -131,7 +131,7 @@ class FTPClient:
         self.conn.dir(remote_path, temp_output.append)
         return _split_file_info(temp_output)
 
-    def cd(self, remote_path = ".", force=False):
+    def cd(self, remote_path = ".", force=False) -> Union[str, List[str]]:
         """Changes the current working directory."""
         if force:
             responses = []
@@ -156,7 +156,7 @@ class FTPClient:
         """Renames file `from_name` to `to_name`"""
         return self.conn.rename(from_name, to_name)
     
-    def mkdir(self, remote_path: str, force=False) -> list:
+    def mkdir(self, remote_path: str, force=False) -> List[str]:
         """Creates a new directory on the server and returns its path name"""
         if not force:
             return [self.conn.mkd(remote_path)]
@@ -167,49 +167,50 @@ class FTPClient:
         responses.append(self.conn.cwd(current_directory))
         return responses
     
-    def get_size(self, file_path: str) -> Optional[int]:
-        """Gets the size of an item"""
+    def get_filesize(self, file_path: str) -> Optional[int]:
+        """Gets the size of a file"""
         try:
             return self.conn.size(file_path)
         except Exception:
             return None
     
-    def delete(self, file_path: str):
+    def delete(self, remote_path: str) -> str:
         """Deletes the item from the server"""
         try:
-            return self.conn.delete(file_path)
+            return self.conn.delete(remote_path)
         except (error_reply, error_perm):
-            return self.conn.rmd(file_path)
+            return self.conn.rmd(remote_path)
     
-    def put(self, local_file, remote_file_path, block_size=8192):
+    def put(self, local_file_path, remote_file_path, block_size=8192) -> dict:
         """Uploads a file onto the server."""
-        file_to_upload = local_file
-        if not isinstance(local_file, IOBase):
-            file_to_upload = open(local_file, "rb")
+        file_to_upload = local_file_path
+        if not isinstance(local_file_path, IOBase):
+            file_to_upload = open(local_file_path, "rb")
 
         try:    
             response = self.conn.storbinary(f"STOR {remote_file_path}", file_to_upload, block_size)
         except Exception as exc:
             return {
-                "local_file": local_file,
+                "local_file": local_file_path,
                 "remote_file": remote_file_path,
                 "status": "ERROR",
                 "additional_notes": (type(exc).__name__, str(exc))
             }
 
         return {
-            "local_file": local_file,
+            "local_file": local_file_path,
             "remote_file": remote_file_path,
             "status": "OK",
             "additional_notes": response
         }
 
-    def put_content(self, local_contents, remote_file_path, block_size=8192):
+    def put_content(self, local_contents, remote_file_path, block_size=8192, overwrite=False):
         """Overwrites a file remotely. 
         (i.e. you don't have to get the file, edit it and then put it. This method saves bandwidth)"""
         content_to_put = BytesIO(local_contents)
+        command = "STOR" if overwrite else "APPE"
         try:
-            response = self.conn.storbinary(f"STOR {remote_file_path}", content_to_put, block_size)
+            response = self.conn.storbinary(f"{command} {remote_file_path}", content_to_put, block_size)
         except Exception as exc:
             return {
                 "local_contents": local_contents,
@@ -225,7 +226,7 @@ class FTPClient:
             "additional_notes": response
         }
 
-    def put_tree(self, local_item_path, remote_item_path, ignore_items=None, block_size=8192):
+    def put_tree(self, local_item_path, remote_item_path, ignore_items=None, block_size=8192) -> List[dict]:
         """Uploads a tree to the server"""
         try:
             files = os.listdir(local_item_path)
@@ -266,7 +267,7 @@ class FTPClient:
 
         return responses
     
-    def get(self, remote_path, local_path=None, block_size=8192):
+    def get(self, remote_path, local_path=None, block_size=8192) -> dict:
         """Retrieves a file from the server"""
         local_file = local_path or os.path.basename(remote_path) 
         close_file = False
@@ -295,7 +296,7 @@ class FTPClient:
             "additional_notes": response
         }
     
-    def get_content(self, remote_path, local_path=None, block_size=8192):
+    def get_content(self, remote_path, local_path=None, block_size=8192) -> dict:
         """Retrieves the contents of a file from the server"""
         local_file = local_path or BytesIO()
         close_file = False
@@ -373,7 +374,7 @@ class FTPClient:
 
         return responses
 
-    def get_tree(self, remote_tree, local_path, block_size=8192):
+    def get_tree(self, remote_tree, local_path, block_size=8192) -> List[dict]:
         """Retrieves an entire tree from the server."""
         features = [line.upper() for line in self.get_features()]
         mlst_supported = any("MLST" in f or "MLSD" in f for f in features)
@@ -466,3 +467,4 @@ def _split_file_info(fileinfo):
             })
 
     return files
+
