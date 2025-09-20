@@ -78,12 +78,12 @@ jobs:
         with:
           python-version: "3.7"
 
-      - name: Install Poetry
+      - name: Install uv
         run: |
           curl -LsSf https://astral.sh/uv/install.sh | sh
           echo "$HOME/.local/bin" >> $GITHUB_PATH
 
-      - name: Set project version with Poetry
+      - name: Set project version with uv
         run: |
           uv python install 3.7
 
