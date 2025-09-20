@@ -1,7 +1,7 @@
 [project]
 name = "ftpleasant"
 description = "A wrapper built on top of python's built-in FTPlib to simplify operations such as uploading or download files from a server"
-version = "0.1.0"
+version = "0.1.1"
 authors = [
   { name="Bahman Altamash", email="bahman.alta@gmail.com" },
 ]
@@ -23,7 +23,7 @@ classifiers = [
 [project.urls]
 Homepage = "https://github.com/bahmoudd/ftpleasant"
 Issues = "https://github.com/bahmoudd/ftpleasant/issues"
-Documentation = "https://github.com/bahmoudd/ftpleasant/wiki/"
+Documentation = "https://github.com/bahmoudd/ftpleasant/blob/master/DOCUMENTATION.md"
 
 [build-system]
 requires = ["hatchling >= 1.26"]
