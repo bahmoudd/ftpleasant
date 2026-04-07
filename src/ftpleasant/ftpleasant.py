@@ -131,22 +131,27 @@ class FTPClient:
         self.conn.dir(remote_path, temp_output.append)
         return _split_file_info(temp_output)
 
-    def cd(self, remote_path = ".", force=False) -> Union[str, List[str]]:
-        """Changes the current working directory."""
-        if force:
-            responses = []
-            path = Path(remote_path).as_posix()
-            parts = [p for p in path.split("/") if p]
-            for item in parts:
-                try:
-                    responses.append(self.conn.cwd(item))
-                except (error_reply, error_perm):
-                    responses.append(self.conn.mkd(item))
-                    responses.append(self.conn.cwd(item))
-            
-            return responses
-            
+    def cd(self, remote_path = ".") -> str:
+        """
+        Changes the current working remote directory
+        """
         return self.conn.cwd(remote_path)
+    
+    def walk(self, remote_path=".") -> List[str]:
+        """
+        Like FTPClient.cd() but this creates the parent directories if they do not exist.
+        """
+        responses = []
+        path = Path(remote_path).as_posix()
+        parts = [p for p in path.split("/") if p]
+        for item in parts:
+            try:
+                responses.append(self.conn.cwd(item))
+            except (error_reply, error_perm):
+                responses.append(self.conn.mkd(item))
+                responses.append(self.conn.cwd(item))
+        
+        return responses
 
     def pwd(self) -> str:
         """Returns the current working directory."""

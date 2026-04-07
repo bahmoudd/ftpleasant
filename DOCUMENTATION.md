@@ -12,11 +12,12 @@
 - [`set_debug_level()`](#topic_2)
 - [`get_welcome()`](#topic_3)
 - [`abort()`](#topic_4)
-- [`quit()](#topic_5)
+- [`quit()`](#topic_5)
 - [`get_features()`](#topic_6)
 - [`get_mlst_features()`](#topic_7)
 - [`ls()`](#topic_8)
 - [`cd()`](#topic_9)
+- [`walk()`](#topic_9.1)
 - [`pwd()`](#topic_10)
 - [`rename()`](#topic_11)
 - [`mkdir()`](#topic_12)
@@ -134,18 +135,17 @@ Returns the list of items present in the current working directory.
 | detailed_listing   | Whether a more comprehensive listing should be returned (including item metadata, default: false) |
 | mlst_listing_facts | What metadata attributes should be returned (ignored if `detailed_listing` is set to false or the server does not support `MLST`) |
 
-## `cd(remote_path=".", force=False) -> str | list[str]` <a name="topic_9"></a>
+## `cd(remote_path=".") -> str` <a name="topic_9"></a>
 
-Changes the current working directory
+Changes the current working directory to `remote_path`. Returns an error if the parent directory/directories do not exist.
 
-| Field              | Description                                                                              | 
-|--------------------|------------------------------------------------------------------------------------------|
-| remote_path        | Where to change to current working directory to (default: the present working directory) |
-| force              | Creates the directories specified in `remote_path` if they do not exist                  |
+## `walk(remote_path=".") -> list[str]` <a name="topic_9.1"></a>
+
+Changes the current working directory to `remote_path`. Creates the parent directory/directories if they do not exist.
 
 ## `pwd() -> str` <a name="topic_10"></a>
 
-Returns the present working directory.
+Returns the current working directory.
 
 ## `rename(from_name: str, to_name: str) -> str` <a name="topic_11"></a>
 
