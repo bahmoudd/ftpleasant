@@ -25,7 +25,7 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.7.5"
+          python-version: "3.8.12"
       
       - name: Install uv
         run: |
@@ -34,7 +34,7 @@ jobs:
           
       - name: Set project version with uv
         run: |
-          uv python install 3.7.5
+          uv python install 3.8.12
 
       - name: Build release distributions
         run: |
